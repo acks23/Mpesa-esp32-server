@@ -10,7 +10,7 @@ CONSUMER_KEY = 'nBZPStriomoXOJiaMfsud5E6D0GxgwVLcqwu5j4DJFK6EDVJ'
 CONSUMER_SECRET = 'xVVJK5NWAIn5QBbPTwMIwxA2nsTEpJjmLwuM5GrQI7jtPcDAhEBfrUxwO5X7gfYz'
 SHORTCODE = '174379'  
 PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
-CALLBACK_URL = 'https://example.com/callback'  # We'll update this after deployment
+CALLBACK_URL = 'https://token-recharge-server.onrender.com/callback'  # We'll update this after deployment
 
 # 1. Function to get OAuth Access Token from Daraja
 def get_access_token():
