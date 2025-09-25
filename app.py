@@ -4,12 +4,13 @@ import requests
 from base64 import b64encode
 from datetime import datetime
 import json
-import firebase_admin  # <-- NEW IMPORT
-from firebase_admin import credentials, firestore, db  # <-- NEW IMPORTS
-import os  # <-- NEW IMPORT (to read environment variables)
+import firebase_admin
+from firebase_admin import credentials, firestore, db
+import os
 
 app = Flask(__name__)
 
+# ===== FIREBASE INITIALIZATION =====
 print("Initializing Firebase...")
 try:
     # Check if already initialized to avoid error during reload
@@ -20,15 +21,16 @@ try:
             cred_json = json.loads(cred_json_string)
             cred = credentials.Certificate(cred_json)
             
-            # Initialize Firebase Admin SDK
-            firebase_admin.initialize_app(cred)
+            # Use your actual Realtime Database URL
+            realtime_db_url = "https://token-loading-system-default-rtdb.europe-west1.firebasedatabase.app/"
+            
+            # Initialize Firebase Admin SDK with Realtime Database URL
+            firebase_admin.initialize_app(cred, {
+                'databaseURL': realtime_db_url
+            })
             
             # Get a reference to the Firestore database
             db_firestore = firestore.client()
-            
-            # Initialize for Realtime Database (REPLACE WITH YOUR ACTUAL URL)
-            realtime_db_url = "https://token-loading-system-default-rtdb.europe-west1.firebasedatabase.app/"  # <-- REPLACE THIS!
-            
             print("✅ Firebase initialized successfully!")
         else:
             print("⚠️  FIREBASE_CREDENTIALS environment variable not found.")
@@ -40,7 +42,7 @@ CONSUMER_KEY = 'nBZPStriomoXOJiaMfsud5E6D0GxgwVLcqwu5j4DJFK6EDVJ'
 CONSUMER_SECRET = 'xVVJK5NWAIn5QBbPTwMIwxA2nsTEpJjmLwuM5GrQI7jtPcDAhEBfrUxwO5X7gfYz'
 SHORTCODE = '174379'
 PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
-CALLBACK_URL = 'https://token-recharge-server.onrender.com/callback'  # Your Render URL
+CALLBACK_URL = 'https://token-recharge-server.onrender.com/callback'  # Your actual Render URL
 
 # ===== HELPER FUNCTIONS =====
 def get_access_token():
@@ -177,10 +179,10 @@ def callback():
             doc_ref.set(transaction_data)
             print("✅ Transaction saved to Firestore!")
 
-            # 2. Send to Realtime Database (For ESP32) - This will trigger the ESP32 immediately
+            # 2. Send to Realtime Database (For ESP32)
             try:
                 # Get a reference to your Realtime Database
-                ref = db.reference('/meters/meter_01')  # Change 'meter_01' to your meter ID if needed
+                ref = db.reference('/meters/meter_01')
                 
                 # Push the token data
                 ref.set({
